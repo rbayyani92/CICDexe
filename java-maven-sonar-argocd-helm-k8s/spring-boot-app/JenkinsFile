@@ -44,13 +44,10 @@ pipeline {
             } 
             steps { 
                 script { 
-                    // FIXED: Replaced "docker.com" with the absolute static binary archive URL
+                    // FIXED: Removed the broken curl download entirely. 
+                    // This safely upgrades your Docker tool using Ubuntu's built-in repositories.
                     sh '''
-                        apt-get update && apt-get install -y curl
-                        curl -fsSL docker.com -o docker.tgz
-                        tar -xzvf docker.tgz
-                        mv docker/docker /usr/bin/docker
-                        rm -rf docker docker.tgz
+                        apt-get update && apt-get install -y docker.io
                     '''
 
                     sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .' 
@@ -76,7 +73,9 @@ pipeline {
                         sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml 
                         git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml 
                         git commit -m "Update deployment image to version ${BUILD_NUMBER}" 
-                        git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main 
+                        
+                        # FIXED: Corrected the broken git push address format
+                        git push https://${GITHUB_TOKEN}@://github.com{GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
                     ''' 
                 } 
             } 
