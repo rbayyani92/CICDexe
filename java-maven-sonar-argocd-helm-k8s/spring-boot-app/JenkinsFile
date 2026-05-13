@@ -77,7 +77,7 @@ pipeline {
                         git commit -m "Update deployment image to version ${BUILD_NUMBER}" 
                         
                         # FIXED: Restored clean URL path formatting and added missing variable dollar sign
-                        git push https://${GITHUB_TOKEN}@://github.com{GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+                        git push https://${GITHUB_TOKEN}@://github.com/{GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
                     ''' 
                 } 
             } 
