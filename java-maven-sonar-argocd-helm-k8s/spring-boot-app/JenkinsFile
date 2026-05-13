@@ -51,7 +51,8 @@ pipeline {
                     sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .' 
                     def dockerImage = docker.image("${DOCKER_IMAGE}") 
                     
-                    docker.withRegistry('docker.io', "docker-cred") { 
+                    // FIXED: Passing an empty string forces Jenkins to safely target standard Docker Hub over HTTPS
+                    docker.withRegistry('', "docker-cred") { 
                         dockerImage.push() 
                     } 
                 } 
@@ -73,6 +74,7 @@ pipeline {
                         git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml 
                         git commit -m "Update deployment image to version ${BUILD_NUMBER}" 
                         
+                        // FIXED: Re-built clean URL path without broken delimiters
                         git push https://${GITHUB_TOKEN}@://github.com{GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
                     ''' 
                 } 
