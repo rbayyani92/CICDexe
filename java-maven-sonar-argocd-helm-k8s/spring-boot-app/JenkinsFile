@@ -61,10 +61,9 @@ pipeline {
             } 
         } 
 
-      stage('Update Deployment File') { 
+    stage('Update Deployment File') { 
             environment { 
-                GIT_REPO_NAME = "Jenkins-Zero-To-Hero" 
-                // FIXED: Changed template owner name to your personal GitHub username
+                GIT_REPO_NAME = "CICDexe" 
                 GIT_USER_NAME = "rbayyani92" 
             } 
             steps { 
