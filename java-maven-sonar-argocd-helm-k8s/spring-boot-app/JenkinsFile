@@ -58,11 +58,10 @@ pipeline {
                 } 
             } 
         } 
-        
         stage('Update Deployment File') { 
             environment { 
                 GIT_REPO_NAME = "Jenkins-Zero-To-Hero" 
-                GIT_USER_NAME = "rbayyani92" 
+                GIT_USER_NAME = "iam-veeramalla" 
             } 
             steps { 
                 withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) { 
@@ -74,11 +73,11 @@ pipeline {
                         git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml 
                         git commit -m "Update deployment image to version ${BUILD_NUMBER}" 
                         
-                        // FIXED: Re-built clean URL path without broken delimiters
+                        # FIXED: Changed '//' to '#' so Linux Bash treats this line as a valid text comment
                         git push https://${GITHUB_TOKEN}@://github.com{GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
                     ''' 
                 } 
             } 
-        } 
+        }
     } 
 }
