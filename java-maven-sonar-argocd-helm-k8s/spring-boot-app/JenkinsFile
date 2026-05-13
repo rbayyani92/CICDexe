@@ -44,7 +44,6 @@ pipeline {
             } 
             steps { 
                 script { 
-                    // Safely provisions a fresh native CLI client binary directly from Ubuntu repos
                     sh '''
                         apt-get update && apt-get install -y docker.io
                     '''
@@ -52,7 +51,6 @@ pipeline {
                     sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .' 
                     def dockerImage = docker.image("${DOCKER_IMAGE}") 
                     
-                    // FIXED: Prepend HTTPS scheme protocol to bypass MalformedURLException
                     docker.withRegistry('docker.io', "docker-cred") { 
                         dockerImage.push() 
                     } 
@@ -75,7 +73,6 @@ pipeline {
                         git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml 
                         git commit -m "Update deployment image to version ${BUILD_NUMBER}" 
                         
-                        // FIXED: Re-built the malformed push syntax into standard Git formatting
                         git push https://${GITHUB_TOKEN}@://github.com{GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
                     ''' 
                 } 
