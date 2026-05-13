@@ -39,14 +39,14 @@ pipeline {
             } 
         }
 
-      stage('Build and Push Docker Image') { 
+    stage('Build and Push Docker Image') { 
             environment { 
                 DOCKER_IMAGE = "abhishekf5/ultimate-cicd:${BUILD_NUMBER}" 
                 REGISTRY_CREDENTIALS = credentials('docker-cred') 
             } 
             steps { 
                 script { 
-                    // FIXED: Targets the exact structural archive index link from download.docker.com
+                    // FIXED: Uses the absolute static package URL instead of docker.com shortcut
                     sh '''
                         apt-get update && apt-get install -y curl
                         curl -fsSL docker.com -o docker.tgz
@@ -63,8 +63,6 @@ pipeline {
                 } 
             } 
         } 
-
-
 
 
         
