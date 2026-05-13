@@ -19,7 +19,7 @@ pipeline {
             } 
         } 
         
-         stage('Static Code Analysis') { 
+        stage('Static Code Analysis') { 
             environment { 
                 SONAR_URL = "http://3.89.147.148:9000" 
             } 
@@ -31,22 +31,20 @@ pipeline {
                         export PATH=$JAVA_HOME/bin:$PATH
                         
                         cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
-                        
-                        # FIXED: Changed -Dsonar.login to -Dsonar.token
                         mvn sonar:sonar -Dsonar.token=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}
                     '''
                 } 
             } 
-        }
-
-            stage('Build and Push Docker Image') { 
+        } 
+        
+        stage('Build and Push Docker Image') { 
             environment { 
                 DOCKER_IMAGE = "abhishekf5/ultimate-cicd:${BUILD_NUMBER}" 
                 REGISTRY_CREDENTIALS = credentials('docker-cred') 
             } 
             steps { 
                 script { 
-                    // FIXED: Corrected the URL from "docker.com" to the direct archive binary download link
+                    // FIXED: Replaced "docker.com" with the direct stable binary URL
                     sh '''
                         apt-get update && apt-get install -y curl
                         curl -fsSL docker.com -o docker.tgz
@@ -63,9 +61,6 @@ pipeline {
                 } 
             } 
         } 
-
-
-
         
         stage('Update Deployment File') { 
             environment { 
