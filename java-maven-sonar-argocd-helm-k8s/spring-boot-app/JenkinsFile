@@ -61,26 +61,29 @@ pipeline {
             } 
         } 
 
-    stage('Update Deployment File') { 
-            environment { 
-                GIT_REPO_NAME = "CICDexe" 
-                GIT_USER_NAME = "rbayyani92" 
-            } 
-            steps { 
-                withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) { 
-                    sh ''' 
-                        git config user.email "ramubayyani92@gmail.com" 
-                        git config user.name "Ramu Bayyani" 
-                        BUILD_NUMBER=${BUILD_NUMBER} 
-                        sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml 
-                        git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml 
-                        git commit -m "Update deployment image to version ${BUILD_NUMBER}" 
-                        
-                        # FIXED: Restored clean URL path formatting and added missing variable dollar sign
-                        git push https://${GITHUB_TOKEN}@://github.com/{GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
-                    ''' 
-                } 
-            } 
-        } 
+   stage('Update Deployment File') {
+    environment {
+        GIT_REPO_NAME = "CICDexe"
+        GIT_USER_NAME = "rbayyani92"
+    }
+
+    steps {
+        withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+            sh '''
+                git config user.email "ramubayyani92@gmail.com"
+                git config user.name "Ramu Bayyani"
+
+                sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" \
+                java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+
+                git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+
+                git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+
+                git push https://${GIT_USER_NAME}:${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+            '''
+        }
+    }
+}
     } 
 }
