@@ -25,6 +25,7 @@ pipeline {
       }
       steps {
         //withCredentials([string(credentialsId: 'sonar', variable: 'SONAR_AUTH_TOKEN')]) {
+        withEnv(["JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64"]) {
         withCredentials([usernamePassword(credentialsId: 'sonar', usernameVariable: 'SONAR_USER', passwordVariable: 'SONAR_AUTH_TOKEN')]) {
 
           sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
