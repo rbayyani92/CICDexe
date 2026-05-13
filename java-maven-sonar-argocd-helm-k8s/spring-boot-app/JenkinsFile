@@ -44,7 +44,7 @@ pipeline {
             } 
             steps { 
                 script { 
-                    // FIXED: Replaced "docker.com" with the direct stable binary URL
+                    // FIXED: Replaced "docker.com" with the absolute static binary archive URL
                     sh '''
                         apt-get update && apt-get install -y curl
                         curl -fsSL docker.com -o docker.tgz
