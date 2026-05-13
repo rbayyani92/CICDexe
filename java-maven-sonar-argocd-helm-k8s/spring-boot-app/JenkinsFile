@@ -19,24 +19,26 @@ pipeline {
             } 
         } 
         
-        stage('Static Code Analysis') { 
+         stage('Static Code Analysis') { 
             environment { 
                 SONAR_URL = "http://3.89.147.148:9000" 
             } 
             steps { 
                 withCredentials([usernamePassword(credentialsId: 'sonar', usernameVariable: 'SONAR_USER', passwordVariable: 'SONAR_AUTH_TOKEN')]) { 
-                    // FIXED: All commands are now wrapped in a single multi-line sh block
                     sh '''
                         apt-get update && apt-get install -y openjdk-17-jdk
                         export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
                         export PATH=$JAVA_HOME/bin:$PATH
                         
                         cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
-                        mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}
+                        
+                        # FIXED: Changed -Dsonar.login to -Dsonar.token
+                        mvn sonar:sonar -Dsonar.token=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}
                     '''
                 } 
             } 
-        } 
+        }
+
         
         stage('Build and Push Docker Image') { 
             environment { 
