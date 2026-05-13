@@ -39,27 +39,15 @@ pipeline {
             } 
         }
 
-        
-                stage('Build and Push Docker Image') { 
+        stage('Build and Push Docker Image') { 
             environment { 
                 DOCKER_IMAGE = "abhishekf5/ultimate-cicd:${BUILD_NUMBER}" 
                 REGISTRY_CREDENTIALS = credentials('docker-cred') 
+                // Forces the Docker server to accept your container's client version
+                DOCKER_API_VERSION = "1.41" 
             } 
             steps { 
                 script { 
-                    // FIXED: Dynamically download and install the latest Docker CLI binary
-                    sh '''
-                        apt-get update && apt-get install -y ca-certificates curl gnupg
-                        install -m 0755 -d /etc/apt/keyrings
-                        curl -fsSL docker.io | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-                        chmod a+r /etc/apt/keyrings/docker.gpg
-
-                        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] docker.io $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-                        
-                        apt-get update && apt-get install -y docker-ce-cli
-                    '''
-
-                    // Continue with your original build and push steps
                     sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .' 
                     def dockerImage = docker.image("${DOCKER_IMAGE}") 
                     docker.withRegistry('docker.io', "docker-cred") { 
@@ -68,6 +56,7 @@ pipeline {
                 } 
             } 
         } 
+
 
         
         stage('Update Deployment File') { 
